@@ -73,8 +73,6 @@ export function List() {
       ? `${filteredCheckedList.length} de ${listTasks.length}`
       : 0
 
-  console.log(listTasks)
-
   return (
     <ListContainer>
       <FormContainer action="#" onSubmit={handleSubmitTask}>
@@ -86,6 +84,7 @@ export function List() {
           placeholder="Adicione uma nova tarefa"
           value={tasks}
           onChange={onTaskValue}
+          required
         />
         <ButtonTask>
           criar
