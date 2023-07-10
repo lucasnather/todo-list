@@ -40,8 +40,9 @@ export const ButtonTask = styled.button`
   font-weight: bold;
   font-size: 1.4rem;
   border-radius: 8px;
-  ${(props) => `color: ${props.theme['gray-100']}`};
+  cursor: pointer;
 
+  ${(props) => `color: ${props.theme['gray-100']}`};
   ${(props) => `border: 1px solid ${props.theme['gray-700']}`};
   ${(props) => `background-color: ${props.theme['blue-dark']}`};
 `
@@ -71,17 +72,25 @@ export const CompletedTask = styled.p`
 
 export const ListTask = styled.ul`
   margin-top: 2.4rem;
+`
 
-  li {
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    font-size: 1.4rem;
-    padding: 1.6rem;
-    border-radius: 8px;
+export const ItemTask = styled.li`
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: 1.4rem;
+  padding: 1.6rem;
+  border-radius: 8px;
 
-    ${(props) => `border: 1px solid ${props.theme['gray-400']}`};
-    ${(props) => `color: ${props.theme['gray-100']}`};
-    ${(props) => `background-color: ${props.theme['gray-500']}`};
+  ${(props) => `border: 1px solid ${props.theme['gray-400']}`};
+  ${(props) => `color: ${props.theme['gray-100']}`};
+  ${(props) => `background-color: ${props.theme['gray-500']}`};
+
+  & + & {
+    margin-top: 1.2rem;
   }
+`
+
+export const Task = styled.p`
+  text-decoration: line-through;
 `

@@ -1,5 +1,5 @@
 import { PlusCircle, Trash } from 'phosphor-react'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import {
   ButtonTask,
   CompletedTask,
@@ -7,8 +7,10 @@ import {
   CreateTask,
   FormContainer,
   InputTask,
+  ItemTask,
   ListContainer,
   ListTask,
+  Task,
 } from './styled'
 
 interface TaskProps {
@@ -21,15 +23,60 @@ export function List() {
   const [listTasks, setListTasks] = useState<TaskProps[]>([])
   const [tasks, setTasks] = useState<string>('')
 
-  function handleSubmitTask(event: ChangeEvent<HTMLInputElement>) {
+  function onTaskValue(event: ChangeEvent<HTMLInputElement>) {
     setTasks(event.target.value)
   }
 
-  console.log(tasks)
+  function handleSubmitTask(event: FormEvent) {
+    event.preventDefault()
+
+    setListTasks((state) => {
+      return [
+        ...state,
+        {
+          id: new Date().getTime().toString(),
+          task: tasks,
+          checked: false,
+        },
+      ]
+    })
+
+    setTasks('')
+  }
+
+  function handleIsChecked(id: string) {
+    setListTasks(
+      listTasks.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            checked: task.checked === false,
+          }
+        } else {
+          return task
+        }
+      }),
+    )
+  }
+
+  function onRemoveTask(id: string) {
+    setListTasks(listTasks.filter((task) => task.id !== id))
+  }
+
+  const filteredCheckedList = listTasks.filter((task) => task.checked === true)
+
+  const listTaskSize = listTasks.length
+
+  const amountTaskChecked =
+    filteredCheckedList.length > 0
+      ? `${filteredCheckedList.length} de ${listTasks.length}`
+      : 0
+
+  console.log(listTasks)
 
   return (
     <ListContainer>
-      <FormContainer action="#">
+      <FormContainer action="#" onSubmit={handleSubmitTask}>
         <label htmlFor="tarefa">Adicione uma nova tarefa</label>
         <InputTask
           type="text"
@@ -37,7 +84,7 @@ export function List() {
           id="tarefa"
           placeholder="Adicione uma nova tarefa"
           value={tasks}
-          onChange={handleSubmitTask}
+          onChange={onTaskValue}
         />
         <ButtonTask>
           criar
@@ -48,26 +95,37 @@ export function List() {
       <ContainerInfoTask>
         <div>
           <CreateTask>
-            Tarefas criadas <span>0</span>
+            Tarefas criadas <span>{listTaskSize}</span>
           </CreateTask>
         </div>
 
         <div>
           <CompletedTask>
-            Concluídas <span>0</span>
+            Concluídas <span>{amountTaskChecked}</span>
           </CompletedTask>
         </div>
       </ContainerInfoTask>
 
       <ListTask>
-        <li>
-          <input type="checkbox" name="checked" id="checked" />
-          <p>
-            Integer urna interdum massa libero auctor neque turpis turpis
-            semper. Duis vel sed fames integer.
-          </p>
-          <Trash size={24} color="#fff" />
-        </li>
+        {listTasks.map((task) => {
+          return (
+            <ItemTask key={task.id}>
+              <input
+                type="checkbox"
+                name="checked"
+                id="checked"
+                checked={task.checked}
+                onChange={() => handleIsChecked(task.id)}
+              />
+              {task.checked ? <Task>{task.task}</Task> : <p>{task.task}</p>}
+              <Trash
+                size={24}
+                color="#fff"
+                onClick={() => onRemoveTask(task.id)}
+              />
+            </ItemTask>
+          )
+        })}
       </ListTask>
     </ListContainer>
   )
