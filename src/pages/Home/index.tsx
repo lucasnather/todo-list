@@ -1,5 +1,11 @@
 import { Header } from '../../components/Header'
+import { List } from '../../components/List'
 
 export function Home() {
-  return <Header />
+  return (
+    <>
+      <Header />
+      <List />
+    </>
+  )
 }

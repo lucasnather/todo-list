@@ -17,9 +17,13 @@ export const GlobalStyle = createGlobalStyle`
         list-style: none;
     }
 
-    body {
+    body, button input {
         font-family: 'Inter', sans-serif;
-        ${(props) => `background-color: ${props.theme['gray-500']}`};
+    }
+
+    body {
+        ${(props) => `background-color: ${props.theme['gray-600']}`};
+        font-weight: 400;
         font-size: 1.6rem;
     }
 `
