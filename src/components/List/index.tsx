@@ -1,4 +1,4 @@
-import { PlusCircle, Trash } from 'phosphor-react'
+import { Clipboard, PlusCircle, Trash } from 'phosphor-react'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import {
   ButtonTask,
@@ -11,6 +11,7 @@ import {
   ListContainer,
   ListTask,
   Task,
+  ZeroTask,
 } from './styled'
 
 interface TaskProps {
@@ -106,27 +107,35 @@ export function List() {
         </div>
       </ContainerInfoTask>
 
-      <ListTask>
-        {listTasks.map((task) => {
-          return (
-            <ItemTask key={task.id}>
-              <input
-                type="checkbox"
-                name="checked"
-                id="checked"
-                checked={task.checked}
-                onChange={() => handleIsChecked(task.id)}
-              />
-              {task.checked ? <Task>{task.task}</Task> : <p>{task.task}</p>}
-              <Trash
-                size={24}
-                color="#fff"
-                onClick={() => onRemoveTask(task.id)}
-              />
-            </ItemTask>
-          )
-        })}
-      </ListTask>
+      {listTasks.length > 0 ? (
+        <ListTask>
+          {listTasks.map((task) => {
+            return (
+              <ItemTask key={task.id}>
+                <input
+                  type="checkbox"
+                  name="checked"
+                  id="checked"
+                  checked={task.checked}
+                  onChange={() => handleIsChecked(task.id)}
+                />
+                {task.checked ? <Task>{task.task}</Task> : <p>{task.task}</p>}
+                <Trash
+                  size={24}
+                  color="#fff"
+                  onClick={() => onRemoveTask(task.id)}
+                />
+              </ItemTask>
+            )
+          })}
+        </ListTask>
+      ) : (
+        <ZeroTask>
+          <Clipboard size={56} />
+          <p>Você ainda não possui nenhuma tarefa</p>
+          <span>Crie tarefas para vê-las</span>
+        </ZeroTask>
+      )}
     </ListContainer>
   )
 }

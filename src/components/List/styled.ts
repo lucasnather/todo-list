@@ -70,6 +70,22 @@ export const CompletedTask = styled.p`
   ${(props) => `color: ${props.theme.purple}`};
 `
 
+export const ZeroTask = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2.4rem;
+  padding-top: 6.4rem;
+
+  ${(props) => `border-top: 1px solid ${props.theme['gray-300']}`};
+  ${(props) => `color: ${props.theme['gray-300']}`};
+
+  p {
+    ${(props) => `color: ${props.theme['gray-200']}`};
+  }
+`
+
 export const ListTask = styled.ul`
   margin-top: 2.4rem;
 `
