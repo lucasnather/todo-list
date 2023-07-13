@@ -1,5 +1,5 @@
 import { Clipboard, PlusCircle, Trash } from 'phosphor-react'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useReducer, useState } from 'react'
 import {
   ButtonTask,
   CompletedTask,
@@ -21,8 +21,48 @@ interface TaskProps {
 }
 
 export function List() {
-  const [listTasks, setListTasks] = useState<TaskProps[]>([])
+  const [listTasks, dispatch] = useReducer(
+    (state: TaskProps[], action: any) => {
+      switch (action.type) {
+        case 'ADD':
+          return [
+            ...state,
+            {
+              id: action.payload.id,
+              task: action.payload.task,
+              checked: false,
+            },
+          ]
+        case 'COMPLETE':
+          return state.map((task) => {
+            if (task.id === action.id) {
+              return { ...task, checked: !task.checked }
+            } else {
+              return task
+            }
+          })
+        case 'REMOVE':
+          return state.filter((task) => task.id !== action.id)
+        default:
+          return state
+      }
+    },
+    [],
+    () => {
+      const storageList = localStorage.getItem('list')
+
+      if (storageList) {
+        return JSON.parse(storageList)
+      }
+    },
+  )
   const [tasks, setTasks] = useState<string>('')
+
+  useEffect(() => {
+    const stateJson = JSON.stringify(listTasks)
+
+    localStorage.setItem('list', stateJson)
+  }, [listTasks])
 
   function onTaskValue(event: ChangeEvent<HTMLInputElement>) {
     setTasks(event.target.value)
@@ -31,37 +71,26 @@ export function List() {
   function handleSubmitTask(event: FormEvent) {
     event.preventDefault()
 
-    setListTasks((state) => {
-      return [
-        ...state,
-        {
-          id: new Date().getTime().toString(),
-          task: tasks,
-          checked: false,
-        },
-      ]
+    dispatch({
+      type: 'ADD',
+      payload: {
+        id: new Date().getTime().toString(),
+        task: tasks,
+      },
     })
 
     setTasks('')
   }
 
-  function handleIsChecked(id: string) {
-    setListTasks(
-      listTasks.map((task) => {
-        if (task.id === id) {
-          return {
-            ...task,
-            checked: task.checked === false,
-          }
-        } else {
-          return task
-        }
-      }),
-    )
+  function handleIsChecked(taskID: string) {
+    dispatch({ type: 'COMPLETE', id: taskID })
   }
 
-  function onRemoveTask(id: string) {
-    setListTasks(listTasks.filter((task) => task.id !== id))
+  function onRemoveTask(taskID: string) {
+    dispatch({
+      type: 'REMOVE',
+      id: taskID,
+    })
   }
 
   const filteredCheckedList = listTasks.filter((task) => task.checked === true)
@@ -83,8 +112,8 @@ export function List() {
           id="tarefa"
           placeholder="Adicione uma nova tarefa"
           value={tasks}
-          onChange={onTaskValue}
           required
+          onChange={onTaskValue}
         />
         <ButtonTask>
           criar
